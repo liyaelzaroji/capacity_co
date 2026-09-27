@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { announcements, competencyMap } from "../data/mockData";
 
 export default function Landing() {
@@ -8,36 +9,40 @@ export default function Landing() {
       <section className="relative overflow-hidden bg-ink text-mist">
         <IsolineArt />
         <div className="relative mx-auto max-w-7xl px-6 pb-24 pt-20 lg:pt-28">
-          <p className="font-mono text-xs uppercase tracking-wider text-teal-bright">
-            Ministry of Earth Sciences · India Meteorological Department
+          <p className="reveal reveal-1 flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-teal-bright">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-bright opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-teal-bright" />
+            </span>
+            Live · Ministry of Earth Sciences · India Meteorological Department
           </p>
-          <h1 className="mt-5 max-w-2xl font-display text-5xl leading-[1.08] tracking-tight lg:text-6xl">
+          <h1 className="reveal reveal-2 mt-5 max-w-2xl font-display text-5xl leading-[1.08] tracking-tight lg:text-6xl">
             Training the people who read the sky, the sea, and the ground.
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-mist/75">
+          <p className="reveal reveal-3 mt-6 max-w-xl text-lg leading-relaxed text-mist/75">
             Capacity Connect is where MoES trainers and trainees meet: verified
             credentials, subject-matched courses, and certificates anyone can
             check in three seconds.
           </p>
-          <div className="mt-9 flex flex-wrap gap-3">
+          <div className="reveal reveal-4 mt-9 flex flex-wrap gap-3">
             <Link
               to="/login?role=trainee"
-              className="rounded-md bg-amber px-5 py-3 text-sm font-medium text-ink transition hover:bg-amber-soft"
+              className="rounded-md bg-amber px-5 py-3 text-sm font-medium text-ink transition hover:-translate-y-0.5 hover:bg-amber-soft"
             >
               Join as a trainee
             </Link>
             <Link
               to="/login?role=trainer"
-              className="rounded-md border border-mist/25 px-5 py-3 text-sm font-medium text-mist transition hover:border-mist/60"
+              className="rounded-md border border-mist/25 px-5 py-3 text-sm font-medium text-mist transition hover:-translate-y-0.5 hover:border-mist/60"
             >
               Apply as a trainer
             </Link>
           </div>
 
-          <dl className="mt-16 grid max-w-2xl grid-cols-3 gap-8 border-t border-mist/15 pt-8">
-            <Stat value="1,240" label="Trainees enrolled" />
-            <Stat value="86" label="Verified trainers" />
-            <Stat value="3-layer" label="Document verification" />
+          <dl className="reveal reveal-5 mt-16 grid max-w-2xl grid-cols-3 gap-8 border-t border-mist/15 pt-8">
+            <Stat value={1240} suffix="" label="Trainees enrolled" />
+            <Stat value={86} suffix="" label="Verified trainers" />
+            <Stat value={3} suffix="-layer" label="Document verification" />
           </dl>
         </div>
       </section>
@@ -125,6 +130,7 @@ export default function Landing() {
               <tr>
                 <th className="px-5 py-3 font-medium">Subject</th>
                 <th className="px-5 py-3 font-medium">Trainers</th>
+                <th className="px-5 py-3 font-medium">Avg. skill score</th>
                 <th className="px-5 py-3 font-medium">Demand</th>
                 <th className="px-5 py-3 font-medium">Coverage</th>
               </tr>
@@ -133,14 +139,15 @@ export default function Landing() {
               {competencyMap.map((row, i) => (
                 <tr key={row.subject} className={i % 2 ? "bg-mist" : "bg-white"}>
                   <td className="px-5 py-3.5 text-ink">{row.subject}</td>
-                  <td className="px-5 py-3.5 font-mono text-slate2">{row.trainers}</td>
+                  <td className="px-5 py-3.5 font-mono text-slate2">{row.trainerCount}</td>
+                  <td className="px-5 py-3.5 font-mono text-slate2">{row.avgSkill}%</td>
                   <td className="px-5 py-3.5 text-slate2">{row.demand}</td>
                   <td className="px-5 py-3.5">
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
                         row.coverage === "Critical gap"
                           ? "bg-coral/10 text-coral"
-                          : row.coverage === "Low"
+                          : row.coverage === "Low" || row.coverage === "Weak bench"
                           ? "bg-amber/15 text-amber"
                           : "bg-teal/10 text-teal-deep"
                       }`}
@@ -178,10 +185,29 @@ export default function Landing() {
   );
 }
 
-function Stat({ value, label }) {
+function Stat({ value, suffix = "", label }) {
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    const duration = 900;
+    const start = performance.now();
+    let frame;
+    function tick(now) {
+      const progress = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplay(Math.round(eased * value));
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    }
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [value]);
+
   return (
     <div>
-      <div className="font-display text-3xl text-mist">{value}</div>
+      <div className="font-display text-3xl tabular-nums text-mist">
+        {display.toLocaleString()}
+        {suffix}
+      </div>
       <div className="mt-1 text-xs text-mist/60">{label}</div>
     </div>
   );
@@ -217,7 +243,7 @@ function IsolineArt() {
   const rings = Array.from({ length: 9 }, (_, i) => 40 + i * 34);
   return (
     <svg
-      className="pointer-events-none absolute -right-24 -top-24 opacity-40"
+      className="pointer-events-none absolute -right-24 -top-24 opacity-40 [animation:spin_140s_linear_infinite]"
       width="560"
       height="560"
       viewBox="0 0 560 560"

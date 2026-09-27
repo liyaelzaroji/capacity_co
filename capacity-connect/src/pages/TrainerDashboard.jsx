@@ -2,12 +2,19 @@ import { useState } from "react";
 import Sidebar from "../components/Sidebar.jsx";
 import TierBadge from "../components/TierBadge.jsx";
 import StarRating from "../components/StarRating.jsx";
-import { trainers, verificationSteps as initialSteps } from "../data/mockData.js";
+import {
+  trainers,
+  verificationSteps as initialSteps,
+  trainerStudents,
+  reviews as allReviews,
+} from "../data/mockData.js";
 import { questions, gradeAnswers } from "../data/qualificationTest.js";
 
 const NAV = [
   { key: "overview", label: "Overview" },
+  { key: "experience", label: "Work experience" },
   { key: "verification", label: "Verification" },
+  { key: "reviews", label: "Trainee reviews" },
   { key: "certifications", label: "Certifications & credits" },
   { key: "trainees", label: "Trainee performance" },
 ];
@@ -19,11 +26,21 @@ export default function TrainerDashboard({ name }) {
   const [steps, setSteps] = useState(initialSteps);
   const overallStatus = deriveStatus(steps);
 
-  const navWithBadge = NAV.map((n) =>
-    n.key === "verification" && overallStatus !== "Verified"
-      ? { ...n, badge: "!" }
-      : n
-  );
+  // The platform periodically samples 3 trainees from THIS trainer's own
+  // roster and asks them to leave a detailed review. Picked once per
+  // session so it stays stable while you click around the dashboard.
+  const roster = trainerStudents[me.id] || [];
+  const [sampledReviewers] = useState(() => pickRandom(roster, Math.min(3, roster.length)));
+  const reviewsForMe = allReviews.filter((r) => r.trainerId === me.id);
+  const pendingReviews = sampledReviewers.filter(
+    (s) => !reviewsForMe.some((r) => r.traineeName === s.name)
+  ).length;
+
+  const navWithBadge = NAV.map((n) => {
+    if (n.key === "verification" && overallStatus !== "Verified") return { ...n, badge: "!" };
+    if (n.key === "reviews" && pendingReviews) return { ...n, badge: pendingReviews };
+    return n;
+  });
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
@@ -42,8 +59,12 @@ export default function TrainerDashboard({ name }) {
 
         <div className="min-w-0 flex-1">
           {active === "overview" && <Overview steps={steps} />}
+          {active === "experience" && <WorkExperience />}
           {active === "verification" && (
             <Verification steps={steps} setSteps={setSteps} />
+          )}
+          {active === "reviews" && (
+            <Reviews sampled={sampledReviewers} reviews={reviewsForMe} />
           )}
           {active === "certifications" && <Certifications />}
           {active === "trainees" && <TraineePerformance />}
@@ -104,6 +125,30 @@ function Overview({ steps }) {
   );
 }
 
+function WorkExperience() {
+  return (
+    <div>
+      <h2 className="font-display text-xl text-ink">Work experience</h2>
+      <p className="mt-1.5 max-w-lg text-sm text-slate2">
+        What you entered at signup. This is what the admin cross-checks
+        against your skill-test score — keep it accurate.
+      </p>
+      <div className="mt-5 flex flex-col gap-3">
+        {me.workExperience.map((w, i) => (
+          <div key={i} className="rounded-md border border-line bg-white p-5">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <p className="font-display text-lg text-ink">{w.role}</p>
+              <span className="font-mono text-xs text-slate2">{w.years} yrs</span>
+            </div>
+            <p className="text-sm text-slate2">{w.org}</p>
+            <p className="mt-2 text-sm leading-relaxed text-ink">{w.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Verification({ steps, setSteps }) {
   const [uploaded, setUploaded] = useState(true); // demo starts post-upload
   const [testOpen, setTestOpen] = useState(false);
@@ -137,7 +182,8 @@ function Verification({ steps, setSteps }) {
       <h2 className="font-display text-xl text-ink">Two-step verification</h2>
       <p className="mt-1.5 max-w-lg text-sm text-slate2">
         We don't take a resume's word for it. Step 1 extracts what you
-        claim; Step 2 tests whether you actually know the subject.
+        claim; Step 2 tests whether you actually know the subject. Admin
+        approval in the queue is based on this score, not your resume alone.
       </p>
 
       {/* Step 1 */}
@@ -291,6 +337,53 @@ function QualificationTest({ onClose, onSubmit }) {
   );
 }
 
+function Reviews({ sampled, reviews }) {
+  return (
+    <div>
+      <h2 className="font-display text-xl text-ink">Trainee reviews</h2>
+      <p className="mt-1.5 max-w-lg text-sm text-slate2">
+        The platform randomly picks {sampled.length} trainees from your own
+        roster each cycle and asks them for a detailed review, not just a
+        star rating.
+      </p>
+
+      <div className="mt-5 flex flex-col gap-3">
+        {sampled.map((student) => {
+          const review = reviews.find((r) => r.traineeName === student.name);
+          return (
+            <div key={student.id} className="rounded-md border border-line bg-white p-5">
+              <div className="flex items-center justify-between">
+                <p className="font-medium text-ink">{student.name}</p>
+                {review ? (
+                  <StarRating value={review.stars} size={15} />
+                ) : (
+                  <span className="rounded-full bg-line px-2.5 py-0.5 text-xs text-slate2">
+                    Awaiting response
+                  </span>
+                )}
+              </div>
+              {review ? (
+                <>
+                  <p className="mt-2.5 text-sm leading-relaxed text-ink">
+                    &quot;{review.comment}&quot;
+                  </p>
+                  <p className="mt-2 font-mono text-xs text-slate2">
+                    Submitted {review.submittedAt}
+                  </p>
+                </>
+              ) : (
+                <p className="mt-2.5 text-sm text-slate2">
+                  This trainee was sampled but hasn't submitted a review yet.
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function Certifications() {
   const nextTierAt = 2500;
   const progress = Math.min(100, Math.round((me.credits / nextTierAt) * 100));
@@ -383,4 +476,14 @@ function StatCard({ label, value }) {
       <p className="mt-1 text-sm text-slate2">{label}</p>
     </div>
   );
+}
+
+function pickRandom(arr, n) {
+  const copy = [...arr];
+  const out = [];
+  while (out.length < n && copy.length) {
+    const i = Math.floor(Math.random() * copy.length);
+    out.push(copy.splice(i, 1)[0]);
+  }
+  return out;
 }

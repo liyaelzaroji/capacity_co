@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Sidebar from "../components/Sidebar.jsx";
 import StarRating from "../components/StarRating.jsx";
 import TierBadge from "../components/TierBadge.jsx";
@@ -154,28 +154,67 @@ function CourseCard({ course }) {
 }
 
 function RateTrainers({ selected, rated, onRate }) {
+  const [drafts, setDrafts] = useState({});
+
+  function updateDraft(id, field, value) {
+    setDrafts((d) => ({ ...d, [id]: { ...d[id], [field]: value } }));
+  }
+
+  function submit(id) {
+    const draft = drafts[id] || {};
+    if (!draft.stars) return;
+    onRate(id, { stars: draft.stars, comment: draft.comment || "" });
+  }
+
   return (
     <div>
       <h2 className="font-display text-xl text-ink">Rate your trainers</h2>
       <p className="mt-1.5 max-w-lg text-sm text-slate2">
-        The platform randomly samples a handful of trainees per trainer each
-        cycle — you were one of them. Ratings are anonymous to the trainer.
+        You were one of 3 trainees the platform randomly picked from each
+        trainer's own roster this cycle. A detailed review carries more
+        weight than stars alone — try to say what actually helped or didn't.
       </p>
 
-      <div className="mt-6 flex flex-col divide-y divide-line rounded-md border border-line bg-white">
+      <div className="mt-6 flex flex-col gap-4">
         {selected.map((t) => (
-          <div key={t.id} className="flex items-center justify-between gap-4 px-5 py-4">
-            <div>
-              <p className="font-medium text-ink">{t.name}</p>
-              <p className="text-sm text-slate2">{t.subject}</p>
+          <div key={t.id} className="rounded-md border border-line bg-white p-5">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="font-medium text-ink">{t.name}</p>
+                <p className="text-sm text-slate2">{t.subject}</p>
+              </div>
+              {rated[t.id] ? (
+                <StarRating value={rated[t.id].stars} />
+              ) : (
+                <StarRating
+                  interactive
+                  value={drafts[t.id]?.stars || 0}
+                  onChange={(n) => updateDraft(t.id, "stars", n)}
+                />
+              )}
             </div>
+
             {rated[t.id] ? (
-              <div className="flex items-center gap-2 text-sm text-teal-deep">
-                <StarRating value={rated[t.id]} />
-                <span>Thanks for the feedback</span>
+              <div className="mt-3 rounded-md bg-teal/5 px-3.5 py-3 text-sm">
+                <p className="text-ink">{rated[t.id].comment || "No written comment left."}</p>
+                <p className="mt-1 text-xs text-teal-deep">Thanks for the feedback</p>
               </div>
             ) : (
-              <StarRating interactive value={0} onChange={(n) => onRate(t.id, n)} />
+              <div className="mt-3">
+                <textarea
+                  value={drafts[t.id]?.comment || ""}
+                  onChange={(e) => updateDraft(t.id, "comment", e.target.value)}
+                  placeholder="What worked well, what didn't — be specific."
+                  className="input min-h-20"
+                />
+                <button
+                  onClick={() => submit(t.id)}
+                  disabled={!drafts[t.id]?.stars}
+                  className="mt-2 rounded-md bg-ink px-4 py-2 text-sm text-mist hover:bg-teal-deep disabled:opacity-40"
+                >
+                  Submit review
+                </button>
+              </div>
             )}
           </div>
         ))}

@@ -1,25 +1,9 @@
 # Capacity Connect — Frontend Prototype
 
-A frontend-only React + Tailwind build of the Capacity Connect portal, with
-the three additions layered on top of the base guide:
-
-1. **Random trainer-rating sampling** — the trainee dashboard simulates the
-   platform picking 3–5 trainers for the logged-in trainee to rate
-   (`src/pages/TraineeDashboard.jsx`, see `RateTrainers`).
-2. **Trainer two-step verification** — resume/credential upload produces an
-   "extracted background" panel (clearly labeled as self-reported and
-   possibly biased), which only becomes official once the trainer passes a
-   subject qualification test (`src/pages/TrainerDashboard.jsx`, see
-   `Verification`).
-3. **Certifications & credits** — trainer tiers (Bronze/Silver/Gold), star
-   ratings, "Top X%" tags, and a credit balance with a ledger of how credits
-   are earned (`src/pages/TrainerDashboard.jsx`, see `Certifications`;
-   trainee-side badges live in `TraineeDashboard.jsx`, see `Certificates`).
-
-Everything is mock data in `src/data/mockData.js` and
-`src/data/qualificationTest.js` — there is no backend here. Wire it up
-against the API described in the build guide when you're ready (Phase 1
-onward).
+A frontend-only React + Tailwind build of the Capacity Connect portal.
+Everything is mock data (`src/data/mockData.js`, `src/data/qualificationTest.js`) —
+there is no backend here. Wire it up against the API described in the build
+guide when you're ready.
 
 ## Run it
 
@@ -30,34 +14,76 @@ npm run dev
 
 Then open the URL Vite prints (usually `http://localhost:5173`).
 
-## Try the three features
+## What's in it
 
-- Go to **Sign in → Trainee tab → Sign in**, then open **Rate your
-  trainers** in the sidebar.
-- Go to **Sign in → Trainer tab → Sign in**, then open **Verification** —
-  upload the resume (mock button), read the extracted panel, then click
-  **Start test** and answer the 5 questions to see Step 1 and Step 2 both
-  clear.
-- From the same Trainer session, open **Certifications & credits** to see
-  the tier badge, stars, "Top X%" tag, and credit ledger.
+**Trainer signup wizard** (`/login?role=trainer`, then "Create an account")
+walks through four steps: account details → work experience (add multiple
+roles) → a 5-question subject skill test → a "submitted, pending admin
+approval" screen showing the score. The application (name, subject, work
+experience, skill score) lands directly in the admin's verification queue —
+so you can demo it end to end in one browser tab: sign up as a trainer, take
+the test, then sign out and sign in as **Admin** to see and approve that
+exact application.
+
+**Trainer dashboard** (sign in as Trainer — a pre-seeded, already-logged-in
+demo trainer, Suresh Menon):
+- **Work experience** — read-only view of what was entered at signup.
+- **Verification** — the two-step check (resume/document extraction, then
+  the qualification test) for an existing account, separate from the
+  signup-time version above.
+- **Trainee reviews** — the platform samples 3 trainees at random from this
+  trainer's own student roster and asks for a detailed written review, not
+  just stars. Two of the three have already submitted (dummy data); the
+  third shows "awaiting response" so you can see both states.
+- **Certifications & credits** — tier badge (Bronze/Silver/Gold), stars,
+  "Top X%" tag, credit balance, progress to the next tier, and a ledger of
+  how credits are earned.
+
+**Trainee dashboard** — "Rate your trainers" now collects a star rating
+*and* a written comment, sampled from trainers tied to courses the trainee
+has actually taken.
+
+**Admin dashboard**:
+- **Verification queue** — each application shows the applicant's skill-test
+  score front and center next to their claimed work experience, with
+  Approve/Reject actions. Scores under 70% are flagged.
+- **Competency map** — grouped by subject, showing trainer count, *average
+  skill-test score* (not just headcount), and every trainer's individual
+  score as a chip — so a subject with plenty of trainers but a weak bench
+  still shows up correctly.
+
+## Demo script
+
+1. Landing page → **Apply as a trainer** → fill the account step → add a
+   work-experience entry → take the 5-question test → see your score and
+   the "pending approval" screen.
+2. Sign out → sign in as **Admin** → **Verification queue** → find the
+   application you just submitted → approve or reject it based on the score.
+3. Sign in as **Trainer** (pre-seeded demo account) → walk through **Work
+   experience**, **Verification**, **Trainee reviews**, and
+   **Certifications & credits**.
+4. Sign in as **Trainee** → **Rate your trainers** → leave a star rating and
+   a written comment for one of the sampled trainers.
 
 ## Structure
 
 ```
 src/
-  components/    Navbar, Sidebar, StarRating, TierBadge — shared UI
-  data/          mock data + the qualification test bank
-  pages/         Landing, Login, and the three role dashboards
-  App.jsx        routes + a simple in-memory session (no real auth)
+  components/    Navbar, Sidebar, StarRating, TierBadge, SkillTestForm
+  data/          mock data + the qualification/skill test question bank
+  pages/         Landing, Login (signup wizard), and the three dashboards
+  App.jsx        routes + in-memory session + shared trainer-application queue
 ```
 
 ## Notes for wiring up the backend
 
-- Swap `onLogin` in `App.jsx` for a real API call, and store a JWT instead
-  of just `{ role, name }` in memory.
-- The qualification test bank in `src/data/qualificationTest.js` ships
-  correct answers to the browser — that's fine for this demo, but per the
-  build guide's own rule, grading and correct answers must move to the
-  backend before this goes anywhere real.
-- `mockData.js` mirrors the schema in the build guide (Part 4) closely
-  enough that swapping in real API responses should mostly be a drop-in.
+- Swap `onLogin`/`onApply` in `App.jsx` for real API calls; store a JWT
+  instead of `{ role, name }` in memory, and move `applications` state to
+  the server.
+- The skill-test bank in `src/data/qualificationTest.js` ships correct
+  answers to the browser — fine for this demo, but grading and correct
+  answers need to move server-side before this goes anywhere real.
+- `mockData.js` mirrors the schema in the build guide closely enough that
+  swapping in real API responses should mostly be a drop-in, including the
+  new `workExperience`, `skillScore`, `trainerStudents`, and `reviews`
+  shapes.

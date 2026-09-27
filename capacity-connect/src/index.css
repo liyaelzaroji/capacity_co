@@ -29,6 +29,26 @@ body {
   }
 }
 
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal {
+  animation: rise-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.reveal-1 { animation-delay: 0ms; }
+.reveal-2 { animation-delay: 90ms; }
+.reveal-3 { animation-delay: 160ms; }
+.reveal-4 { animation-delay: 230ms; }
+.reveal-5 { animation-delay: 320ms; }
+
 .isoline-field {
   background-image:
     repeating-radial-gradient(circle at 82% 20%, transparent 0, transparent 26px, rgba(244,247,246,0.05) 27px, transparent 28px);
