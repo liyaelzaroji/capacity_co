@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #F4F7F6;
+  color: #0E1B2A;
+}
+
+::selection {
+  background: #E8A33D;
+  color: #0E1B2A;
+}
+
+*:focus-visible {
+  outline: 2px solid #1F6F78;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+.isoline-field {
+  background-image:
+    repeating-radial-gradient(circle at 82% 20%, transparent 0, transparent 26px, rgba(244,247,246,0.05) 27px, transparent 28px);
+}
+
+@layer components {
+  .input {
+    @apply w-full rounded-md border border-line bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-slate2/60 focus:border-teal;
+  }
+}
+
+.grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
