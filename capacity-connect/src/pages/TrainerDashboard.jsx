@@ -46,7 +46,7 @@ export default function TrainerDashboard({ name }) {
     <div className="mx-auto max-w-7xl px-6 py-10">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="font-mono text-xs uppercase tracking-wide text-teal-deep">
+          <p className="font-mono text-xs uppercase tracking-wide text-crimson">
             Trainer dashboard
           </p>
           <h1 className="mt-1 font-display text-3xl text-ink">Welcome back, {name}.</h1>
@@ -87,7 +87,7 @@ function StatusPill({ status }) {
     status === "Verified"
       ? "bg-teal/10 text-teal-deep border-teal/30"
       : status === "Needs re-test"
-      ? "bg-coral/10 text-coral border-coral/30"
+      ? "bg-crimson/10 text-crimson border-crimson/30"
       : "bg-amber/15 text-amber border-amber/40";
   return (
     <span className={`rounded-full border px-3 py-1 text-xs font-medium ${styles}`}>
@@ -239,7 +239,7 @@ function Verification({ steps, setSteps }) {
             {test.status === "passed" ? (
               <span className="text-teal-deep">— passed</span>
             ) : (
-              <span className="text-coral">— below pass mark, try again</span>
+              <span className="text-crimson">— below pass mark, try again</span>
             )}
           </p>
         ) : null}
@@ -249,7 +249,7 @@ function Verification({ steps, setSteps }) {
         ) : test.status !== "passed" ? (
           <button
             onClick={() => setTestOpen(true)}
-            className="mt-4 rounded-md bg-ink px-4 py-2 text-sm text-mist hover:bg-teal-deep"
+            className="mt-4 rounded-md bg-ink px-4 py-2 text-sm text-mist hover:bg-crimson-deep"
           >
             {test.attempts > 0 ? "Retake test" : "Start test"}
           </button>
@@ -268,7 +268,7 @@ function StepStatus({ status }) {
     cleared: { text: "Cleared", cls: "bg-teal/10 text-teal-deep" },
     in_progress: { text: "In progress", cls: "bg-amber/15 text-amber" },
     passed: { text: "Passed", cls: "bg-teal/10 text-teal-deep" },
-    failed: { text: "Below pass mark", cls: "bg-coral/10 text-coral" },
+    failed: { text: "Below pass mark", cls: "bg-crimson/10 text-crimson" },
   };
   const s = map[status] || map.not_started;
   return (

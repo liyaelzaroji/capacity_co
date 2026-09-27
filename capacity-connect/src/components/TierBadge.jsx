@@ -1,7 +1,7 @@
 const TIER_STYLES = {
   Gold: "bg-amber/15 text-amber border-amber/40",
   Silver: "bg-slate2/10 text-slate2 border-slate2/30",
-  Bronze: "bg-coral/10 text-coral border-coral/30",
+  Bronze: "bg-crimson/10 text-crimson border-crimson/30",
 };
 
 export default function TierBadge({ tier, topPercent, size = "md" }) {

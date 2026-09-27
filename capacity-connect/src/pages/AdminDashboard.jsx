@@ -18,7 +18,7 @@ export default function AdminDashboard({ name, applications, onDecision }) {
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
       <header>
-        <p className="font-mono text-xs uppercase tracking-wide text-teal-deep">
+        <p className="font-mono text-xs uppercase tracking-wide text-crimson">
           Admin dashboard
         </p>
         <h1 className="mt-1 font-display text-3xl text-ink">Welcome back, {name}.</h1>
@@ -94,7 +94,7 @@ function ApplicationCard({ app, onDecision }) {
           <p className="font-medium text-ink">
             {app.name || "Unnamed applicant"}{" "}
             {app.docStatus === "flagged" && (
-              <span className="ml-1 rounded-full bg-coral/10 px-2 py-0.5 text-xs text-coral">
+              <span className="ml-1 rounded-full bg-crimson/10 px-2 py-0.5 text-xs text-crimson">
                 Document mismatch flagged
               </span>
             )}
@@ -105,7 +105,7 @@ function ApplicationCard({ app, onDecision }) {
         </div>
         <div className="text-right">
           <p
-            className={`font-mono text-2xl ${passed ? "text-teal-deep" : "text-coral"}`}
+            className={`font-mono text-2xl ${passed ? "text-teal-deep" : "text-crimson"}`}
           >
             {app.skillScore}%
           </p>
@@ -137,12 +137,12 @@ function ApplicationCard({ app, onDecision }) {
           </button>
           <button
             onClick={() => onDecision(app.id, "Rejected")}
-            className="rounded-md border border-line px-3.5 py-1.5 text-sm text-ink hover:border-coral hover:text-coral"
+            className="rounded-md border border-line px-3.5 py-1.5 text-sm text-ink hover:border-crimson hover:text-crimson"
           >
             Reject
           </button>
           {!passed && (
-            <span className="ml-1 self-center text-xs text-coral">
+            <span className="ml-1 self-center text-xs text-crimson">
               Below 70% pass mark
             </span>
           )}
@@ -178,7 +178,7 @@ function Competency() {
                 <span
                   className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
                     row.coverage === "Critical gap"
-                      ? "bg-coral/10 text-coral"
+                      ? "bg-crimson/10 text-crimson"
                       : row.coverage === "Low" || row.coverage === "Weak bench"
                       ? "bg-amber/15 text-amber"
                       : "bg-teal/10 text-teal-deep"

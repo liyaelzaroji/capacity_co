@@ -28,7 +28,7 @@ export default function StarRating({ value = 0, onChange, interactive = false, s
               height={size}
               viewBox="0 0 20 20"
               fill={filled ? "#E8A33D" : "none"}
-              stroke={filled ? "#E8A33D" : "#4A5A66"}
+              stroke={filled ? "#E8A33D" : "#5C574E"}
               strokeWidth="1.2"
             >
               <path d="M10 1.5l2.6 5.4 5.9.7-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.7z" />

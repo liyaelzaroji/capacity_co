@@ -45,7 +45,7 @@ export default function Login({ onLogin, onApply }) {
     e.preventDefault();
     const name = account.name || (role === "trainee" ? "Liya" : "Admin User");
     onLogin(role, name);
-    navigate(role === "admin" ? "/admin" : "/trainee");
+    navigate(role === "admin" ? "/admin" : role === "trainer" ? "/trainer" : "/trainee");
   }
 
   function handleAccountStep(e) {
@@ -79,7 +79,7 @@ export default function Login({ onLogin, onApply }) {
 
   return (
     <div className="mx-auto flex min-h-[calc(100vh-64px)] max-w-md flex-col justify-center px-6 py-16">
-      <p className="font-mono text-xs uppercase tracking-wide text-teal-deep">
+      <p className="font-mono text-xs uppercase tracking-wide text-crimson">
         Capacity Connect
       </p>
       <h1 className="mt-2 font-display text-3xl tracking-tight text-ink">
@@ -141,7 +141,7 @@ export default function Login({ onLogin, onApply }) {
 
           <button
             type="submit"
-            className="mt-2 rounded-md bg-teal px-4 py-3 text-sm font-medium text-mist transition hover:bg-teal-deep"
+            className="mt-2 rounded-md bg-crimson px-4 py-3 text-sm font-medium text-mist transition hover:bg-crimson-deep"
           >
             {mode === "login" ? "Sign in" : "Create account"}
           </button>
@@ -184,7 +184,7 @@ export default function Login({ onLogin, onApply }) {
           </Field>
           <button
             type="submit"
-            className="mt-2 rounded-md bg-teal px-4 py-3 text-sm font-medium text-mist transition hover:bg-teal-deep"
+            className="mt-2 rounded-md bg-crimson px-4 py-3 text-sm font-medium text-mist transition hover:bg-crimson-deep"
           >
             Continue to work experience
           </button>
@@ -248,7 +248,7 @@ export default function Login({ onLogin, onApply }) {
                 <button
                   type="button"
                   onClick={() => setExperience((rows) => rows.filter((_, ri) => ri !== i))}
-                  className="mt-2 text-xs text-coral"
+                  className="mt-2 text-xs text-crimson"
                 >
                   Remove this entry
                 </button>
@@ -264,7 +264,7 @@ export default function Login({ onLogin, onApply }) {
           </button>
           <button
             type="submit"
-            className="mt-1 rounded-md bg-teal px-4 py-3 text-sm font-medium text-mist transition hover:bg-teal-deep"
+            className="mt-1 rounded-md bg-crimson px-4 py-3 text-sm font-medium text-mist transition hover:bg-crimson-deep"
           >
             Continue to skill test
           </button>
@@ -290,7 +290,7 @@ export default function Login({ onLogin, onApply }) {
           </p>
           <button
             onClick={() => switchMode("login")}
-            className="mt-5 rounded-md bg-ink px-4 py-2.5 text-sm text-mist hover:bg-teal-deep"
+            className="mt-5 rounded-md bg-ink px-4 py-2.5 text-sm text-mist hover:bg-crimson-deep"
           >
             Back to sign in
           </button>
@@ -302,7 +302,7 @@ export default function Login({ onLogin, onApply }) {
           {mode === "login" ? "New here?" : "Already registered?"}{" "}
           <button
             onClick={() => switchMode(mode === "login" ? "signup" : "login")}
-            className="font-medium text-teal-deep underline underline-offset-2"
+            className="font-medium text-crimson underline underline-offset-2"
           >
             {mode === "login" ? "Create an account" : "Sign in instead"}
           </button>
@@ -320,7 +320,7 @@ function WizardProgress({ step, steps, labels }) {
         <div key={s} className="flex flex-1 items-center gap-1.5">
           <div
             className={`h-1.5 flex-1 rounded-full ${
-              i <= idx ? "bg-teal" : "bg-line"
+              i <= idx ? "bg-crimson" : "bg-line"
             }`}
           />
         </div>

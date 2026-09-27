@@ -36,7 +36,7 @@ export default function TraineeDashboard({ name }) {
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
       <header>
-        <p className="font-mono text-xs uppercase tracking-wide text-teal-deep">
+        <p className="font-mono text-xs uppercase tracking-wide text-crimson">
           Trainee dashboard
         </p>
         <h1 className="mt-1 font-display text-3xl text-ink">Welcome back, {name}.</h1>
@@ -92,7 +92,7 @@ function Overview({ completedCourses, avgScore, certCount, pendingCount, onGoRat
           </div>
           <button
             onClick={onGoRate}
-            className="shrink-0 rounded-md bg-ink px-4 py-2 text-sm text-mist hover:bg-teal-deep"
+            className="shrink-0 rounded-md bg-ink px-4 py-2 text-sm text-mist hover:bg-crimson-deep"
           >
             Rate now
           </button>
@@ -210,7 +210,7 @@ function RateTrainers({ selected, rated, onRate }) {
                 <button
                   onClick={() => submit(t.id)}
                   disabled={!drafts[t.id]?.stars}
-                  className="mt-2 rounded-md bg-ink px-4 py-2 text-sm text-mist hover:bg-teal-deep disabled:opacity-40"
+                  className="mt-2 rounded-md bg-ink px-4 py-2 text-sm text-mist hover:bg-crimson-deep disabled:opacity-40"
                 >
                   Submit review
                 </button>

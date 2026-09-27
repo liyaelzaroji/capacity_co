@@ -6,12 +6,12 @@ export default function Navbar({ role, onLogout }) {
     <header className="sticky top-0 z-30 border-b border-line bg-mist/90 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5">
         <Link to="/" className="flex items-center gap-2.5">
-          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-            <circle cx="13" cy="13" r="11.5" stroke="#1F6F78" strokeWidth="1.4" />
-            <circle cx="13" cy="13" r="7.5" stroke="#1F6F78" strokeWidth="1.2" opacity="0.6" />
-            <circle cx="13" cy="13" r="3.2" fill="#E8A33D" />
+          <svg width="24" height="24" viewBox="0 0 26 26" fill="none">
+            <circle cx="13" cy="13" r="11.5" stroke="#B3261E" strokeWidth="1.4" />
+            <circle cx="13" cy="13" r="7.5" stroke="#B3261E" strokeWidth="1.2" opacity="0.6" />
+            <circle cx="13" cy="13" r="3.2" fill="#B3261E" />
           </svg>
-          <span className="font-display text-lg tracking-tight text-ink">
+          <span className="font-body text-sm font-semibold uppercase tracking-wider text-ink">
             Capacity Connect
           </span>
         </Link>
@@ -26,7 +26,7 @@ export default function Navbar({ role, onLogout }) {
                 onLogout?.();
                 navigate("/");
               }}
-              className="rounded-md border border-line px-3.5 py-1.5 text-sm text-ink transition hover:border-teal hover:text-teal"
+              className="rounded-md border border-line px-3.5 py-1.5 text-sm text-ink transition hover:border-crimson hover:text-crimson"
             >
               Sign out
             </button>
@@ -37,9 +37,9 @@ export default function Navbar({ role, onLogout }) {
             <a href="#verification" className="text-slate2 hover:text-ink">Verification</a>
             <Link
               to="/login"
-              className="rounded-md bg-ink px-4 py-2 text-mist transition hover:bg-teal-deep"
+              className="rounded-md border border-crimson px-4 py-2 font-medium text-crimson transition hover:bg-crimson hover:text-mist"
             >
-              Sign in
+              Sign in →
             </Link>
           </nav>
         )}
